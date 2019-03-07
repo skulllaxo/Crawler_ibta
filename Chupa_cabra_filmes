@@ -1,0 +1,32 @@
+
+
+from bs4 import BeautifulSoup
+import requests
+import re
+
+
+url = 'http://www.adorocinema.com/filmes/numero-cinemas/'
+res = requests.get(url)
+soup = BeautifulSoup(res.text,'html.parser')
+
+
+x = soup.find_all()
+
+    
+    
+    
+#print(soup.prettify())
+#print(soup.find_all('td')[3].get_text())   
+for v in soup.find_all('a',class_="meta-title-link"):
+    if 'href' in str(v):
+        titulo = v.get_text()
+        print(titulo)
+
+
+
+links = []
+for link in soup.findAll('a', attrs={'href': re.compile("/filmes/")}):
+    links.append(link.get('href'))
+
+
+
