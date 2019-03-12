@@ -34,3 +34,69 @@ print(url2)
 res2 = requests.get(url2)
 soup2 = BeautifulSoup(res2.text,'html.parser')
 sinopse = soup2.find_all('div',class_="content-txt "))
+
+
+
+
+
+
+
+
+
+
+
+from bs4 import BeautifulSoup
+import requests
+import re
+
+
+url = 'http://www.adorocinema.com/filmes/numero-cinemas/'
+
+
+def pagina(url = url):
+    res = requests.get(url)
+    pag = BeautifulSoup(res.text,'html.parser')
+    return pag
+
+#print(soup.prettify())
+#print(soup.find_all('td')[3].get_text())   
+def titulo(pag=pagina()):
+    for v in pag.find_all('a',class_="meta-title-link"):
+        if 'href' in str(v):
+            tit = v.get_text()
+    return tit
+
+
+def sinopse(pag=pagina()):
+    sinop = pag.find_all('div',class_="content-txt ")
+    return str(sinop).replace('/div','').replace('<div class="content-txt ">','').replace('<>,','').replace('<>]','')
+        
+
+
+def links_pagina(pag=pagina()):
+    links = []
+    for link in pag.findAll('a', attrs={'href': re.compile("/filmes/")}):
+        links.append(link.get('href'))
+    return links
+
+
+for v in links_pagina():
+    url2 = f'http://www.adorocinema.com{v}'
+    print(url2)
+    pagina(url2)
+    print(titulo())
+    #print('@'*10)
+    #print(sinopse())
+    print('##'*40)
+
+
+
+
+    #url2 = f'http://www.adorocinema.com{links[0]}'
+
+
+
+
+
+
+
