@@ -1,50 +1,3 @@
-
-
-from bs4 import BeautifulSoup
-import requests
-import re
-
-
-url = 'http://www.adorocinema.com/filmes/numero-cinemas/'
-res = requests.get(url)
-soup = BeautifulSoup(res.text,'html.parser')
-
-
-x = soup.find_all()
-
-    
-    
-    
-#print(soup.prettify())
-#print(soup.find_all('td')[3].get_text())   
-for v in soup.find_all('a',class_="meta-title-link"):
-    if 'href' in str(v):
-        titulo = v.get_text()
-        print(titulo)
-
-
-
-links = []
-for link in soup.findAll('a', attrs={'href': re.compile("/filmes/")}):
-    links.append(link.get('href'))
-
-
-url2 = f'http://www.adorocinema.com{links[0]}'
-print(url2)
-res2 = requests.get(url2)
-soup2 = BeautifulSoup(res2.text,'html.parser')
-sinopse = soup2.find_all('div',class_="content-txt "))
-
-
-
-
-
-
-
-
-
-
-
 from bs4 import BeautifulSoup
 import requests
 import re
@@ -61,15 +14,22 @@ def pagina(url = url):
 #print(soup.prettify())
 #print(soup.find_all('td')[3].get_text())   
 def titulo(pag=pagina()):
+    lista_titulos = list()
     for v in pag.find_all('a',class_="meta-title-link"):
         if 'href' in str(v):
             tit = v.get_text()
-    return tit
+            lista_titulos.append(tit)
+            
+
+    return lista_titulos
 
 
 def sinopse(pag=pagina()):
-    sinop = pag.find_all('div',class_="content-txt ")
-    return str(sinop).replace('/div','').replace('<div class="content-txt ">','').replace('<>,','').replace('<>]','')
+    lista_sinopse = list()
+    for v in pag.find_all('div',class_="content-txt "):
+        sinop = v.get_text()
+        lista_sinopse.append(sinop)
+    return lista_sinopse
         
 
 
@@ -79,24 +39,21 @@ def links_pagina(pag=pagina()):
         links.append(link.get('href'))
     return links
 
+def data_lancamento(pag=pagina()):
+    data = pag.find_all('span',class_='date')
+    for d in data:
+        data_lancamento = d.get_text()
+        return data_lancamento
 
 for v in links_pagina():
     url2 = f'http://www.adorocinema.com{v}'
+    #res = requests.get(url2)
+    #pag = BeautifulSoup(res.text,'html.parser')    
+    pag = pagina(url=url2)
     print(url2)
-    pagina(url2)
-    print(titulo())
-    #print('@'*10)
+    print('titulo',titulo(pag))
+    print('sinopse',sinopse(pag))
+    print('data lancamento',data_lancamento(pag))
+    print('@'*10)
     #print(sinopse())
-    print('##'*40)
-
-
-
-
-    #url2 = f'http://www.adorocinema.com{links[0]}'
-
-
-
-
-
-
-
+    #print('##'*40)
